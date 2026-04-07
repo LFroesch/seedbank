@@ -31,9 +31,12 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case tea.KeyMsg:
+		if msg.String() == "ctrl+c" {
+			return m, tea.Quit
+		}
 		// Global keys
 		switch msg.String() {
-		case "ctrl+c", "q":
+		case "q":
 			if m.mode == modeGenerators {
 				return m, tea.Quit
 			}
