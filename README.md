@@ -32,11 +32,6 @@ Command:
 
 ```bash
 seedbank
-```
-## Usage
-
-```bash
-seedbank              # interactive TUI
 echo "" | seedbank    # pipe mode (CLI, no TUI)
 ```
 
