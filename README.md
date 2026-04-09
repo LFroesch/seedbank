@@ -4,6 +4,33 @@ TUI fake data generator. Browse generators, pick fields, preview output, export 
 
 Generate realistic, internally-consistent seed data for databases, APIs, and testing — from the terminal.
 
+## Quick Install
+
+Recommended (installs to `~/.local/bin`):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/LFroesch/seedbank/main/install.sh | bash
+```
+
+Or download a binary from [GitHub Releases](https://github.com/LFroesch/seedbank/releases).
+
+Or install with Go:
+
+```bash
+go install github.com/LFroesch/seedbank@latest
+```
+
+Or build from source:
+
+```bash
+make install
+```
+
+Command:
+
+```bash
+seedbank
+```
 ## Install
 
 ```bash
