@@ -6,6 +6,8 @@ Generate realistic, internally-consistent seed data for databases, APIs, and tes
 
 ## Quick Install
 
+Supported platforms: Linux and macOS. On Windows, use WSL.
+
 Recommended (installs to `~/.local/bin`):
 
 ```bash
