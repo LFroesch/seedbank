@@ -33,19 +33,6 @@ Command:
 ```bash
 seedbank
 ```
-## Install
-
-```bash
-go install github.com/LFroesch/seedbank@latest
-```
-
-Or build from source:
-
-```bash
-cd apps/seedbank
-make install
-```
-
 ## Usage
 
 ```bash
