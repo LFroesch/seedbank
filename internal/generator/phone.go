@@ -7,8 +7,11 @@ import (
 
 type PhoneGen struct{}
 
-func (g *PhoneGen) Name() string        { return "Phone Numbers" }
-func (g *PhoneGen) Description() string { return "US phone numbers with real area codes" }
+func (g *PhoneGen) Name() string { return "Phone Numbers" }
+func (g *PhoneGen) Description() string {
+	return "Field source for US phone numbers with real area codes"
+}
+func (g *PhoneGen) Kind() Kind { return KindField }
 func (g *PhoneGen) Fields() []Field {
 	return []Field{
 		{Name: "phone", Desc: "(555) 123-4567 format"},

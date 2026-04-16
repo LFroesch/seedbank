@@ -39,8 +39,11 @@ var jobTitles = []string{
 
 type CompanyGen struct{}
 
-func (g *CompanyGen) Name() string        { return "Companies" }
-func (g *CompanyGen) Description() string { return "Company names, departments, job titles" }
+func (g *CompanyGen) Name() string { return "Companies" }
+func (g *CompanyGen) Description() string {
+	return "Field source for company, department, and job title data"
+}
+func (g *CompanyGen) Kind() Kind { return KindField }
 func (g *CompanyGen) Fields() []Field {
 	return []Field{
 		{Name: "company", Desc: "Company name"},

@@ -7,7 +7,8 @@ import (
 type AddressGen struct{}
 
 func (g *AddressGen) Name() string        { return "Addresses" }
-func (g *AddressGen) Description() string { return "Coherent US addresses — state, city, and zip all match" }
+func (g *AddressGen) Description() string { return "Field source for coherent US addresses" }
+func (g *AddressGen) Kind() Kind          { return KindField }
 func (g *AddressGen) Fields() []Field {
 	return []Field{
 		{Name: "street", Desc: "Street address"},

@@ -7,13 +7,14 @@ import (
 
 // MixGenerator combines fields from multiple generators into merged records.
 type MixGenerator struct {
-	Gens   []Generator
+	Gens    []Generator
 	Fields_ []Field // combined field list
 }
 
 func (g *MixGenerator) Name() string        { return "Custom Mix" }
-func (g *MixGenerator) Description() string  { return "Combined fields from multiple generators" }
-func (g *MixGenerator) Fields() []Field      { return g.Fields_ }
+func (g *MixGenerator) Description() string { return "Combined fields from multiple generators" }
+func (g *MixGenerator) Kind() Kind          { return KindField }
+func (g *MixGenerator) Fields() []Field     { return g.Fields_ }
 
 func (g *MixGenerator) Generate(count int, rng *rand.Rand) []map[string]any {
 	// Generate from each sub-generator

@@ -4,15 +4,16 @@ import (
 	"fmt"
 	"math/rand"
 	"testing"
+	"time"
 )
 
 func TestAllGeneratorsRegistered(t *testing.T) {
 	if len(Registry) == 0 {
 		t.Fatal("no generators registered")
 	}
-	// Should have at least the 12 known generators
-	if len(Registry) < 12 {
-		t.Errorf("expected at least 12 generators, got %d", len(Registry))
+	// Should have at least the 14 known generators
+	if len(Registry) < 14 {
+		t.Errorf("expected at least 14 generators, got %d", len(Registry))
 	}
 }
 
@@ -133,6 +134,71 @@ func TestMixGenerator(t *testing.T) {
 		}
 		if rec["emails.email"] == nil {
 			t.Errorf("record %d: missing emails.email", i)
+		}
+	}
+}
+
+func TestPhotoGeneratorIncludesPlaceholderMetadata(t *testing.T) {
+	gen := &PhotoGen{}
+	rng := rand.New(rand.NewSource(7))
+	record := gen.Generate(1, rng)[0]
+
+	for _, field := range []string{"url", "width", "height", "aspect_ratio", "category", "seed", "alt_text"} {
+		if _, ok := record[field]; !ok {
+			t.Fatalf("photo record missing field %q", field)
+		}
+	}
+	if got := toString(record["alt_text"]); len(got) < len("WIP placeholder") || got[:len("WIP placeholder")] != "WIP placeholder" {
+		t.Fatalf("alt_text = %q, want WIP placeholder prefix", got)
+	}
+}
+
+func TestPersonAgeMatchesDOB(t *testing.T) {
+	gen := &PersonGen{}
+	rng := rand.New(rand.NewSource(42))
+	records := gen.Generate(25, rng)
+
+	for i, rec := range records {
+		dob, ok := rec["dob"].(string)
+		if !ok {
+			t.Fatalf("record %d dob is not a string", i)
+		}
+		age, ok := rec["age"].(int)
+		if !ok {
+			t.Fatalf("record %d age is not an int", i)
+		}
+		dobTime, err := time.Parse("2006-01-02", dob)
+		if err != nil {
+			t.Fatalf("record %d invalid dob %q: %v", i, dob, err)
+		}
+		want := ageAt(dobTime, referenceDate())
+		if age != want {
+			t.Fatalf("record %d age mismatch: got %d want %d", i, age, want)
+		}
+	}
+}
+
+func TestDateAgeMatchesDate(t *testing.T) {
+	gen := &DateGen{}
+	rng := rand.New(rand.NewSource(42))
+	records := gen.Generate(25, rng)
+
+	for i, rec := range records {
+		date, ok := rec["date"].(string)
+		if !ok {
+			t.Fatalf("record %d date is not a string", i)
+		}
+		age, ok := rec["age"].(int)
+		if !ok {
+			t.Fatalf("record %d age is not an int", i)
+		}
+		tm, err := time.Parse("2006-01-02", date)
+		if err != nil {
+			t.Fatalf("record %d invalid date %q: %v", i, date, err)
+		}
+		want := ageAt(tm, referenceDate())
+		if age != want {
+			t.Fatalf("record %d age mismatch: got %d want %d", i, age, want)
 		}
 	}
 }

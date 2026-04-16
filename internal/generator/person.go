@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
-	"time"
 )
 
 type PersonGen struct{}
 
-func (g *PersonGen) Name() string        { return "Person (Linked)" }
-func (g *PersonGen) Description() string { return "Coherent identity: name, email, phone, address, company — all connected" }
+func (g *PersonGen) Name() string { return "Person" }
+func (g *PersonGen) Description() string {
+	return "Coherent person record: identity, contact info, address, and company all line up"
+}
+func (g *PersonGen) Kind() Kind { return KindRecord }
 func (g *PersonGen) Fields() []Field {
 	return []Field{
 		{Name: "id", Desc: "UUID"},
@@ -81,13 +83,14 @@ func (g *PersonGen) Generate(count int, rng *rand.Rand) []map[string]any {
 		website := "https://www." + compDomain
 		workEmail := firstL + "." + lastL + "@" + compDomain
 
-		// DOB and age — age is derived from DOB, not random
-		age := 18 + rng.Intn(58)
-		now := time.Now()
-		birthYear := now.Year() - age
-		birthMonth := 1 + rng.Intn(12)
-		birthDay := 1 + rng.Intn(28)
-		dob := fmt.Sprintf("%04d-%02d-%02d", birthYear, birthMonth, birthDay)
+		// DOB and age derived against a fixed reference date for stable seeded output.
+		ref := referenceDate()
+		minDob := ref.AddDate(-75, 0, 0)
+		maxDob := ref.AddDate(-18, 0, 0)
+		daySpan := int(maxDob.Sub(minDob).Hours() / 24)
+		dobTime := minDob.AddDate(0, 0, rng.Intn(daySpan+1))
+		dob := dobTime.Format("2006-01-02")
+		age := ageAt(dobTime, ref)
 
 		// Avatar from initials
 		avatar := fmt.Sprintf("https://ui-avatars.com/api/?name=%s+%s&size=200&background=random&bold=true", first, last)

@@ -19,9 +19,13 @@ func defaultConfig() *Config {
 		DefaultCount:  10,
 		DefaultFormat: "json",
 		TableName:     "seed_data",
-		OutputDir:     ".",
+		OutputDir:     defaultOutputDir(),
 		Seed:          0,
 	}
+}
+
+func defaultOutputDir() string {
+	return "."
 }
 
 func configPath() string {
@@ -37,6 +41,9 @@ func Load() *Config {
 		return cfg
 	}
 	json.Unmarshal(data, cfg)
+	if cfg.OutputDir == "" {
+		cfg.OutputDir = defaultOutputDir()
+	}
 	return cfg
 }
 

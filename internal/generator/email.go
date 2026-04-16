@@ -8,8 +8,11 @@ import (
 
 type EmailGen struct{}
 
-func (g *EmailGen) Name() string        { return "Emails" }
-func (g *EmailGen) Description() string { return "Email addresses with gender-matched names" }
+func (g *EmailGen) Name() string { return "Emails" }
+func (g *EmailGen) Description() string {
+	return "Field source for email addresses derived from fake names"
+}
+func (g *EmailGen) Kind() Kind { return KindField }
 func (g *EmailGen) Fields() []Field {
 	return []Field{
 		{Name: "email", Desc: "Full email address"},

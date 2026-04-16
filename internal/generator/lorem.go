@@ -24,8 +24,11 @@ var loremWords = []string{
 
 type LoremGen struct{}
 
-func (g *LoremGen) Name() string        { return "Lorem Ipsum" }
-func (g *LoremGen) Description() string  { return "Paragraphs, sentences, and words of placeholder text" }
+func (g *LoremGen) Name() string { return "Lorem Ipsum" }
+func (g *LoremGen) Description() string {
+	return "Field source for placeholder words, sentences, and paragraphs"
+}
+func (g *LoremGen) Kind() Kind { return KindField }
 func (g *LoremGen) Fields() []Field {
 	return []Field{
 		{Name: "word", Desc: "Single random word"},

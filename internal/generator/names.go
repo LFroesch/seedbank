@@ -8,7 +8,8 @@ import (
 type NameGen struct{}
 
 func (g *NameGen) Name() string        { return "Names" }
-func (g *NameGen) Description() string { return "First, last, and full names with gender-matched prefix" }
+func (g *NameGen) Description() string { return "Field source for names, usernames, and prefixes" }
+func (g *NameGen) Kind() Kind          { return KindField }
 func (g *NameGen) Fields() []Field {
 	return []Field{
 		{Name: "first_name", Desc: "First name"},

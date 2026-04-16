@@ -8,8 +8,11 @@ import (
 
 type DateGen struct{}
 
-func (g *DateGen) Name() string        { return "Dates" }
-func (g *DateGen) Description() string { return "Internally consistent dates, timestamps, and ages" }
+func (g *DateGen) Name() string { return "Dates" }
+func (g *DateGen) Description() string {
+	return "Field source for internally consistent dates, timestamps, and ages"
+}
+func (g *DateGen) Kind() Kind { return KindField }
 func (g *DateGen) Fields() []Field {
 	return []Field{
 		{Name: "date", Desc: "YYYY-MM-DD"},
@@ -30,12 +33,8 @@ func (g *DateGen) Generate(count int, rng *rand.Rand) []map[string]any {
 		ts := minT + rng.Int63n(maxT-minT)
 		t := time.Unix(ts, 0).UTC()
 
-		// Age derived from the date as if it were a birthday
-		now := time.Now()
-		age := now.Year() - t.Year()
-		if now.YearDay() < t.YearDay() {
-			age--
-		}
+		// Age derived against fixed reference date for stable seeded output.
+		age := ageAt(t, referenceDate())
 
 		records[i] = map[string]any{
 			"date":      t.Format("2006-01-02"),

@@ -56,8 +56,11 @@ var namedColors = []namedColor{
 
 type ColorGen struct{}
 
-func (g *ColorGen) Name() string        { return "Colors" }
-func (g *ColorGen) Description() string { return "Color names with matching hex and RGB values" }
+func (g *ColorGen) Name() string { return "Colors" }
+func (g *ColorGen) Description() string {
+	return "Field source for color names with matching hex and RGB values"
+}
+func (g *ColorGen) Kind() Kind { return KindField }
 func (g *ColorGen) Fields() []Field {
 	return []Field{
 		{Name: "name", Desc: "Color name"},

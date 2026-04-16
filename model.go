@@ -32,40 +32,53 @@ const (
 	modeMixSelect              // Multi-select generators for mix mode
 )
 
+type pane int
+
+const (
+	paneLeft pane = iota
+	paneRight
+)
+
 type model struct {
-	mode mode
+	mode     mode
+	prevMode mode
 
 	// Terminal
 	width  int
 	height int
 
 	// Generator selection
-	generators    []generator.Generator
-	genCursor     int
-	genScrollOff  int
-	selectedGen   generator.Generator
-	selectedFields []string // Which fields are toggled on
-	fieldCursor   int
-	fieldToggles  []bool // Parallel to selectedGen.Fields()
+	generators         []generator.Generator
+	genCursor          int
+	genScrollOff       int
+	genDetailScroll    int
+	selectedGen        generator.Generator
+	selectedFields     []string // Which fields are toggled on
+	fieldCursor        int
+	fieldScrollOff     int
+	fieldToggles       []bool // Parallel to selectedGen.Fields()
+	fieldSummaryScroll int
+	activePane         pane
 
 	// Generation
-	count     int
-	records   []map[string]any
-	rng       *rand.Rand
-	seed      int64
+	count   int
+	records []map[string]any
+	rng     *rand.Rand
+	seed    int64
 
 	// Output
-	format        output.Format
-	formatCursor  int
-	preview       string
-	previewLines  []string
-	previewScroll int
-	prettyView    bool // true = human-readable cards, false = raw copyable output
+	format                 output.Format
+	formatCursor           int
+	preview                string
+	previewLines           []string
+	previewScroll          int
+	previewInspectorScroll int
+	prettyView             bool // true = human-readable cards, false = raw copyable output
 
 	// Export
-	textInput  textinput.Model
-	statusMsg  string
-	statusExp  time.Time
+	textInput textinput.Model
+	statusMsg string
+	statusExp time.Time
 
 	// Config
 	config *config.Config
@@ -74,9 +87,11 @@ type model struct {
 	helpScroll int
 
 	// Mix mode
-	mixToggles []bool                // parallel to generators list
-	mixCursor  int
-	mixGens    []generator.Generator // selected generators for mix
+	mixToggles       []bool // parallel to generators list
+	mixCursor        int
+	mixScrollOff     int
+	mixGens          []generator.Generator // selected generators for mix
+	mixSummaryScroll int
 }
 
 func initialModel() model {
@@ -101,6 +116,7 @@ func initialModel() model {
 		seed:         seed,
 		format:       output.JSON,
 		formatCursor: 0,
+		activePane:   paneLeft,
 		textInput:    ti,
 		config:       cfg,
 	}
@@ -227,4 +243,20 @@ func (m *model) formatPretty() string {
 func (m *model) reseed() {
 	m.seed = time.Now().UnixNano()
 	m.rng = rand.New(rand.NewSource(m.seed))
+}
+
+func (m *model) textInputFocused() bool {
+	return (m.mode == modeCount || m.mode == modeExport) && m.textInput.Focused()
+}
+
+func (m *model) togglePane() {
+	if m.activePane == paneLeft {
+		m.activePane = paneRight
+		return
+	}
+	m.activePane = paneLeft
+}
+
+func (m *model) resetPaneFocus() {
+	m.activePane = paneLeft
 }

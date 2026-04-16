@@ -17,15 +17,20 @@ var dimensions = [][2]int{
 
 type PhotoGen struct{}
 
-func (g *PhotoGen) Name() string        { return "Photos" }
-func (g *PhotoGen) Description() string { return "Placeholder image URLs and metadata" }
+func (g *PhotoGen) Name() string { return "Photos" }
+func (g *PhotoGen) Description() string {
+	return "Field source for placeholder image URLs and metadata (WIP: semantic accuracy is still rough)"
+}
+func (g *PhotoGen) Kind() Kind { return KindField }
 func (g *PhotoGen) Fields() []Field {
 	return []Field{
-		{Name: "url", Desc: "Placeholder image URL"},
+		{Name: "url", Desc: "Seeded placeholder image URL"},
 		{Name: "width", Desc: "Image width in px"},
 		{Name: "height", Desc: "Image height in px"},
-		{Name: "category", Desc: "Image category"},
-		{Name: "alt_text", Desc: "Alt text description"},
+		{Name: "aspect_ratio", Desc: "Width:height ratio for the placeholder"},
+		{Name: "category", Desc: "Loose category hint used in the seed"},
+		{Name: "seed", Desc: "Deterministic placeholder seed"},
+		{Name: "alt_text", Desc: "WIP caption derived from placeholder metadata"},
 	}
 }
 
@@ -36,17 +41,20 @@ func (g *PhotoGen) Generate(count int, rng *rand.Rand) []map[string]any {
 		cat := photoCategories[rng.Intn(len(photoCategories))]
 		w, h := dim[0], dim[1]
 		seed := rng.Intn(10000)
+		seedTag := fmt.Sprintf("%s-%d", cat, seed)
 
-		// picsum.photos is reliable and deterministic with seed
-		url := fmt.Sprintf("https://picsum.photos/seed/%s-%d/%d/%d", cat, seed, w, h)
-		alt := fmt.Sprintf("A %s photo (%dx%d)", cat, w, h)
+		// picsum.photos is reliable and deterministic with seed, but not semantically exact.
+		url := fmt.Sprintf("https://picsum.photos/seed/%s/%d/%d", seedTag, w, h)
+		alt := fmt.Sprintf("WIP placeholder: %s scene at %dx%d", cat, w, h)
 
 		records[i] = map[string]any{
-			"url":      url,
-			"width":    w,
-			"height":   h,
-			"category": cat,
-			"alt_text": alt,
+			"url":          url,
+			"width":        w,
+			"height":       h,
+			"aspect_ratio": fmt.Sprintf("%d:%d", w, h),
+			"category":     cat,
+			"seed":         seedTag,
+			"alt_text":     alt,
 		}
 	}
 	return records

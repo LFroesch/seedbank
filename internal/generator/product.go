@@ -39,8 +39,11 @@ var descTemplates = []string{
 
 type ProductGen struct{}
 
-func (g *ProductGen) Name() string        { return "Products (Linked)" }
-func (g *ProductGen) Description() string { return "Coherent products: name, SKU, category, price, rating — all connected" }
+func (g *ProductGen) Name() string { return "Products" }
+func (g *ProductGen) Description() string {
+	return "Coherent product records: name, SKU, category, price, rating, and stock stay aligned"
+}
+func (g *ProductGen) Kind() Kind { return KindRecord }
 func (g *ProductGen) Fields() []Field {
 	return []Field{
 		{Name: "id", Desc: "Product UUID"},
