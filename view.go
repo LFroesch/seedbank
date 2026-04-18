@@ -130,7 +130,7 @@ func (m *model) renderHeader() string {
 		if i > 0 {
 			renderedTabs = append(renderedTabs, dimStyle.Render(" │ "))
 		}
-		label := fmt.Sprintf("%d %s", i+1, tab.label)
+		label := fmt.Sprintf("%s", tab.label)
 		if m.mode == tab.mode {
 			renderedTabs = append(renderedTabs, activeTabStyle.Render(label))
 		} else {
