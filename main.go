@@ -20,7 +20,7 @@ func main() {
 	cfg := config.Load()
 
 	genName := flag.String("gen", "", "generator name (e.g. person, names, email)")
-	schemaPath := flag.String("schema", "", "path to CREATE TABLE SQL file for schema-driven generation")
+	schemaPath := flag.String("schema", "", "path to CREATE TABLE SQL file for preview heuristic schema-driven generation")
 	fields := flag.String("fields", "", "comma-separated field names (default: all)")
 	count := flag.Int("count", cfg.DefaultCount, "number of records")
 	format := flag.String("fmt", cfg.DefaultFormat, "output format: json, jsonl, csv, markdown, sql")

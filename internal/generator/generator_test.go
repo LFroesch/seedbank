@@ -148,8 +148,8 @@ func TestPhotoGeneratorIncludesPlaceholderMetadata(t *testing.T) {
 			t.Fatalf("photo record missing field %q", field)
 		}
 	}
-	if got := toString(record["alt_text"]); len(got) < len("WIP placeholder") || got[:len("WIP placeholder")] != "WIP placeholder" {
-		t.Fatalf("alt_text = %q, want WIP placeholder prefix", got)
+	if got := toString(record["alt_text"]); len(got) < len("Placeholder asset") || got[:len("Placeholder asset")] != "Placeholder asset" {
+		t.Fatalf("alt_text = %q, want Placeholder asset prefix", got)
 	}
 }
 

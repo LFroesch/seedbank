@@ -1,8 +1,8 @@
 # Seedbank
 
-TUI fake data generator. Browse generators, pick fields, preview output, export to file. Built with Go and [Bubble Tea](https://github.com/charmbracelet/bubbletea).
+TUI fake data generator. Browse generators, pick fields, preview output, and export deterministic fixture data from the terminal. Built with Go and [Bubble Tea](https://github.com/charmbracelet/bubbletea).
 
-Generate realistic, internally-consistent seed data for databases, APIs, and testing — from the terminal.
+Generate realistic, internally-consistent seed data for databases, APIs, and testing from the terminal.
 
 The TUI uses the same full-width shell pattern as `sb`: active step tabs in the header, panel-based content, transient status line, and a footer with mode-aware key hints. On wider terminals, workflow screens use equal-size side-by-side panels; on tighter terminals they collapse into a stacked compact layout while keeping the header and footer visible.
 
@@ -66,7 +66,7 @@ Coherent record builders are best when you want one ready-to-export record with 
 | Addresses | Coherent US addresses (state/city/zip cross-referenced) |
 | Emails | Addresses derived from fake name pools |
 | Phone Numbers | US numbers with state-matched area codes |
-| Photos | Seeded placeholder image URLs and metadata (WIP: semantic accuracy is still rough) |
+| Photos | Deterministic placeholder image asset URLs and metadata |
 | Numbers | IDs, ints, bigints, decimals, currency amounts/codes, booleans |
 | Identifiers | UUID variants and compact IDs |
 | Network | IPv4, IPv6, MAC, hostname, URL, and user-agent values |
@@ -114,7 +114,6 @@ seedbank --list
 seedbank --gen person --count 10 --fmt json
 seedbank --gen identifiers --count 10 --fields uuid,short_id --fmt csv
 seedbank --gen network --count 20 --fmt jsonl
-seedbank --schema db/schema/users.sql --count 100 --fmt sql --out db/seed/users.sql
 seedbank --gen phone --fields phone,state --fmt csv --out fixtures/phones.csv
 seedbank --gen products --count 50 --fmt sql --table products --out db/seed/products.sql
 seedbank --gen person --count 3 --fmt json --seed 42
@@ -125,11 +124,11 @@ Notes:
 - `--out -` writes to stdout. Any other path writes to that file and creates parent directories if needed.
 - Relative `--out` paths are resolved from the directory where you run `seedbank`.
 - `--seed` makes outputs reproducible across runs, including age/date-derived fields.
-- `--schema <file.sql>` parses a `CREATE TABLE` statement and generates rows with exact column names based on type/name heuristics.
+- `--schema <file.sql>` is a preview feature: it parses a `CREATE TABLE` statement and generates rows with exact column names using type/name heuristics.
 
 ### Schema Mode (`--schema`)
 
-Use schema mode when you want seed data that matches a table definition directly.
+Schema mode is a preview feature for generating seed data that matches a table definition directly. It is useful for simple single-table `CREATE TABLE` inputs, but it is still heuristic-driven rather than a full schema seeding workflow.
 
 ```bash
 seedbank --schema db/schema/users.sql --count 100 --fmt json
@@ -144,6 +143,10 @@ Heuristic mapping examples:
 - `BOOLEAN` -> `numbers.boolean`
 - `TIMESTAMP/DATE/TIME` -> `dates.datetime` / `dates.date` / `dates.time`
 - `ip_address`, `user_agent`, `url`, `hostname`, `mac` -> `network.*`
+
+### Placeholder Image Assets
+
+The `Photos` generator is for deterministic placeholder image asset data, not text-to-image generation. It emits stable placeholder URLs plus dimensions, aspect ratio, a category tag, a deterministic seed, and a simple asset label you can use in fixtures or mock content pipelines.
 
 ## Data Quality
 

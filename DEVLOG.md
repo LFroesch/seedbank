@@ -1,4 +1,8 @@
 ## DevLog
+### 2026-04-18: V1 framing pass
+Reset the v1 scope around the parts Seedbank already does well: the polished TUI/CLI flow, deterministic generators, and export formats. Reframed `Photos` as deterministic placeholder image asset output instead of semantic image generation, and demoted `--schema` to preview status in the user-facing docs and CLI help so it no longer reads as part of the core v1 promise.
+Files: internal/generator/photo.go, internal/generator/generator_test.go, main.go, README.md, WORK.md.
+
 ### 2026-04-14: `--schema` flag implementation
 Implemented `--schema` CLI mode that parses a `CREATE TABLE` statement from SQL, infers column mappings from SQL types + column-name hints, and generates output with exact schema column names. Added support for key backend mappings including `UUID`/`*_id` via `Identifiers`, network-centric columns (`ip`, `url`, `user_agent`, `mac`, `hostname`) via `Network`, and numeric/date/boolean mappings through `Numbers`/`Dates`. Added parser/mapping unit tests and preserved existing `--fmt`/`--out` flow for schema mode.
 Files: main.go, schema.go, schema_test.go, main_test.go, README.md, WORK.md.
