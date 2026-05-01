@@ -16,9 +16,12 @@ import (
 	"github.com/LFroesch/seedbank/internal/generator"
 )
 
+var version = "dev"
+
 func main() {
 	cfg := config.Load()
 
+	showVersion := flag.Bool("version", false, "Print version and exit")
 	genName := flag.String("gen", "", "generator name (e.g. person, names, email)")
 	schemaPath := flag.String("schema", "", "path to CREATE TABLE SQL file for preview heuristic schema-driven generation")
 	fields := flag.String("fields", "", "comma-separated field names (default: all)")
@@ -28,7 +31,16 @@ func main() {
 	seed := flag.Int64("seed", 0, "random seed (0 = random)")
 	outPath := flag.String("out", "-", "write output to file path; use - for stdout")
 	listGens := flag.Bool("list", false, "list available generators and their fields")
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "seedbank — TUI fake data generator\n\n")
+		fmt.Fprintf(os.Stderr, "Usage: seedbank [flags]\n\n")
+		flag.PrintDefaults()
+	}
 	flag.Parse()
+	if *showVersion {
+		fmt.Println("seedbank " + version)
+		os.Exit(0)
+	}
 
 	// List mode: show generators and exit
 	if *listGens {
