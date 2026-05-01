@@ -29,8 +29,12 @@ func defaultOutputDir() string {
 }
 
 func configPath() string {
-	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".config", "seedbank", "config.json")
+	base, err := os.UserConfigDir()
+	if err != nil {
+		home, _ := os.UserHomeDir()
+		base = filepath.Join(home, ".config")
+	}
+	return filepath.Join(base, "seedbank", "config.json")
 }
 
 // Load reads config from disk, returning defaults if not found.
