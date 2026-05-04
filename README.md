@@ -73,7 +73,8 @@ Coherent record builders are best when you want one ready-to-export record with 
 | Companies | Company names, departments, job titles |
 | Dates | Internally consistent dates/timestamps/ages |
 | Colors | Color names mapped to real RGB/hex values |
-| Mix | Combine fields from multiple field-source generators |
+
+`Custom Mix` is a TUI-only compose mode. Press `m` from Browse to combine fields from multiple field-source generators into one record shape.
 
 ## Output Formats
 
@@ -86,6 +87,7 @@ JSON, JSONL, CSV, Markdown table, SQL INSERT statements.
 | `j/k`, `up/down` | Navigate |
 | `pgup/pgdn`, `g/G` | Faster scroll / jump to top or bottom |
 | `enter` | Select generator / confirm |
+| `m` | Open custom mix builder from Browse |
 | `space` | Toggle field |
 | `tab` | Switch active pane on split views |
 | `1-6` | Jump between workflow steps |

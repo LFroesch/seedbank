@@ -1,4 +1,8 @@
 ## DevLog
+### 2026-05-04: V1 blocker audit + work cleanup
+Audited the repo against `WORK.md`, trimmed the plan down to actual remaining v1 blockers, and moved already-shipped items out of the active sprint. Also restored the regressed numbered `1-6` workflow tabs in the TUI header so the UI, tests, and docs match again, and clarified that `Custom Mix` is a TUI-only compose flow rather than a normal CLI generator.
+Files: view.go, README.md, WORK.md.
+
 ### 2026-04-18: V1 framing pass
 Reset the v1 scope around the parts Seedbank already does well: the polished TUI/CLI flow, deterministic generators, and export formats. Reframed `Photos` as deterministic placeholder image asset output instead of semantic image generation, and demoted `--schema` to preview status in the user-facing docs and CLI help so it no longer reads as part of the core v1 promise.
 Files: internal/generator/photo.go, internal/generator/generator_test.go, main.go, README.md, WORK.md.
