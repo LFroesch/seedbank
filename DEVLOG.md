@@ -1,4 +1,8 @@
 ## DevLog
+### 2026-05-05: Schema heuristics hardening + v1 closeout
+Ran direct CLI smoke checks for `--list`, `--gen`, file output, and `--schema`, then tightened schema-mode name heuristics so obvious columns stop falling through to junky generic mappings. Added/adjusted mappings for `age`, `username`, `website`, avatar/image-style columns, `year`, stock/count-style numeric fields, `employee_count`, and lat/lng-style coordinates, then hardened short-token matching so columns like `shipping_address` do not get misclassified by loose `ip`/`site`/`role` substring hits. Added regression tests around those mappings and human-range age output. Closed out `WORK.md` to reflect that no active blocker is currently confirmed for v1.
+Files: schema.go, schema_test.go, WORK.md.
+
 ### 2026-05-04: V1 blocker audit + work cleanup
 Audited the repo against `WORK.md`, trimmed the plan down to actual remaining v1 blockers, and moved already-shipped items out of the active sprint. Also restored the regressed numbered `1-6` workflow tabs in the TUI header so the UI, tests, and docs match again, and clarified that `Custom Mix` is a TUI-only compose flow rather than a normal CLI generator.
 Files: view.go, README.md, WORK.md.

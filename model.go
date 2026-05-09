@@ -125,15 +125,15 @@ func initialModel() model {
 }
 
 func (m *model) getSafeWidth() int {
-	if m.width < minTerminalWidth {
-		return minTerminalWidth
+	if m.width < 1 {
+		return 1
 	}
 	return m.width
 }
 
 func (m *model) getSafeHeight() int {
-	if m.height < minTerminalHeight {
-		return minTerminalHeight
+	if m.height < 1 {
+		return 1
 	}
 	return m.height
 }

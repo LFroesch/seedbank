@@ -36,11 +36,22 @@ func TestMapSchemaColumnsHeuristics(t *testing.T) {
 		{Name: "customer_id", Type: "bigint"},
 		{Name: "email", Type: "text"},
 		{Name: "first_name", Type: "varchar"},
+		{Name: "username", Type: "varchar"},
 		{Name: "created_at", Type: "timestamp"},
+		{Name: "age", Type: "int"},
+		{Name: "birth_year", Type: "int"},
 		{Name: "price", Type: "decimal"},
 		{Name: "is_active", Type: "boolean"},
 		{Name: "ip_address", Type: "varchar"},
 		{Name: "user_agent", Type: "text"},
+		{Name: "website", Type: "text"},
+		{Name: "avatar_url", Type: "text"},
+		{Name: "stock_qty", Type: "int"},
+		{Name: "employee_count", Type: "int"},
+		{Name: "latitude", Type: "double precision"},
+		{Name: "shipping_address", Type: "text"},
+		{Name: "role", Type: "varchar"},
+		{Name: "mac_address", Type: "varchar"},
 	}
 	mapped := mapSchemaColumns(cols)
 
@@ -48,15 +59,26 @@ func TestMapSchemaColumnsHeuristics(t *testing.T) {
 		gen   string
 		field string
 	}{
-		"id":          {gen: "identifiers", field: "uuid"},
-		"customer_id": {gen: "numbers", field: "bigint"},
-		"email":       {gen: "emails", field: "email"},
-		"first_name":  {gen: "names", field: "first_name"},
-		"created_at":  {gen: "dates", field: "datetime"},
-		"price":       {gen: "numbers", field: "currency_amount"},
-		"is_active":   {gen: "numbers", field: "boolean"},
-		"ip_address":  {gen: "network", field: "ipv4"},
-		"user_agent":  {gen: "network", field: "user_agent"},
+		"id":               {gen: "identifiers", field: "uuid"},
+		"customer_id":      {gen: "numbers", field: "bigint"},
+		"email":            {gen: "emails", field: "email"},
+		"first_name":       {gen: "names", field: "first_name"},
+		"username":         {gen: "names", field: "username"},
+		"created_at":       {gen: "dates", field: "datetime"},
+		"age":              {gen: "dates", field: "age"},
+		"birth_year":       {gen: "dates", field: "year"},
+		"price":            {gen: "numbers", field: "currency_amount"},
+		"is_active":        {gen: "numbers", field: "boolean"},
+		"ip_address":       {gen: "network", field: "ipv4"},
+		"user_agent":       {gen: "network", field: "user_agent"},
+		"website":          {gen: "companies", field: "website"},
+		"avatar_url":       {gen: "photos", field: "url"},
+		"stock_qty":        {gen: "numbers", field: "integer"},
+		"employee_count":   {gen: "companies", field: "employee_count"},
+		"latitude":         {gen: "numbers", field: "float"},
+		"shipping_address": {gen: "addresses", field: "full_address"},
+		"role":             {gen: "companies", field: "job_title"},
+		"mac_address":      {gen: "network", field: "mac_address"},
 	}
 
 	for _, m := range mapped {
@@ -66,6 +88,23 @@ func TestMapSchemaColumnsHeuristics(t *testing.T) {
 		}
 		if m.GenName != w.gen || m.FieldName != w.field {
 			t.Fatalf("column %q mapped to %s.%s, want %s.%s", m.ColumnName, m.GenName, m.FieldName, w.gen, w.field)
+		}
+	}
+}
+
+func TestGenerateSchemaRecordsAgeLooksHuman(t *testing.T) {
+	mappings := []columnMapping{
+		{ColumnName: "age", GenName: "dates", FieldName: "age"},
+	}
+
+	records, _ := generateSchemaRecords(mappings, 25, rand.New(rand.NewSource(42)))
+	for i, rec := range records {
+		age, ok := rec["age"].(int)
+		if !ok {
+			t.Fatalf("record %d age type = %T, want int", i, rec["age"])
+		}
+		if age < 0 || age > 130 {
+			t.Fatalf("record %d age = %d, want human-looking range", i, age)
 		}
 	}
 }

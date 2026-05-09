@@ -259,11 +259,22 @@ func mapSchemaColumns(cols []schemaColumn) []columnMapping {
 func pickGeneratorField(col schemaColumn) (string, string) {
 	name := strings.ToLower(col.Name)
 	typ := strings.ToLower(col.Type)
+	nameTokens := tokenizeSchemaName(name)
 
 	containsAny := func(s string, keys ...string) bool {
 		for _, k := range keys {
 			if strings.Contains(s, k) {
 				return true
+			}
+		}
+		return false
+	}
+	hasToken := func(keys ...string) bool {
+		for _, want := range keys {
+			for _, tok := range nameTokens {
+				if tok == want {
+					return true
+				}
 			}
 		}
 		return false
@@ -275,6 +286,8 @@ func pickGeneratorField(col schemaColumn) (string, string) {
 		return "names", "first_name"
 	case name == "last_name":
 		return "names", "last_name"
+	case name == "username" || name == "user_name":
+		return "names", "username"
 	case name == "full_name" || name == "name":
 		return "names", "full_name"
 	case containsAny(name, "email"):
@@ -293,21 +306,27 @@ func pickGeneratorField(col schemaColumn) (string, string) {
 		return "addresses", "country"
 	case containsAny(name, "company", "employer"):
 		return "companies", "company"
+	case containsAny(name, "employee_count"):
+		return "companies", "employee_count"
 	case containsAny(name, "department", "dept"):
 		return "companies", "department"
-	case containsAny(name, "title", "role"):
+	case containsAny(name, "title") || hasToken("role"):
 		return "companies", "job_title"
-	case containsAny(name, "website", "site", "domain", "hostname"):
+	case containsAny(name, "website") || hasToken("site"):
+		return "companies", "website"
+	case containsAny(name, "domain", "hostname"):
 		return "network", "hostname"
+	case containsAny(name, "avatar", "image", "photo", "thumbnail"):
+		return "photos", "url"
 	case containsAny(name, "url", "uri"):
 		return "network", "url"
 	case containsAny(name, "user_agent", "useragent"):
 		return "network", "user_agent"
-	case containsAny(name, "mac"):
+	case hasToken("mac") || containsAny(name, "mac_address"):
 		return "network", "mac_address"
 	case containsAny(name, "ipv6"):
 		return "network", "ipv6"
-	case containsAny(name, "ip", "ipv4"):
+	case containsAny(name, "ipv4") || hasToken("ip"):
 		return "network", "ipv4"
 	case containsAny(name, "address"):
 		return "addresses", "full_address"
@@ -317,6 +336,16 @@ func pickGeneratorField(col schemaColumn) (string, string) {
 		return "numbers", "currency_amount"
 	case containsAny(name, "percent", "ratio"):
 		return "numbers", "percentage"
+	case name == "year" || strings.HasSuffix(name, "_year"):
+		return "dates", "year"
+	case name == "age" || strings.HasSuffix(name, "_age"):
+		return "dates", "age"
+	case containsAny(name, "latitude", "longitude"):
+		return "numbers", "float"
+	case name == "lat" || name == "lng" || name == "lon":
+		return "numbers", "float"
+	case containsAny(name, "quantity", "qty", "count", "stock", "inventory"):
+		return "numbers", "integer"
 	case containsAny(name, "active", "enabled", "is_", "has_", "deleted", "verified"):
 		return "numbers", "boolean"
 	case name == "id":
@@ -375,6 +404,12 @@ func pickGeneratorField(col schemaColumn) (string, string) {
 	default:
 		return "lorem", "word"
 	}
+}
+
+func tokenizeSchemaName(name string) []string {
+	return strings.FieldsFunc(name, func(r rune) bool {
+		return (r < 'a' || r > 'z') && (r < '0' || r > '9')
+	})
 }
 
 func generateSchemaRecords(mappings []columnMapping, count int, rng *rand.Rand) ([]map[string]any, []string) {

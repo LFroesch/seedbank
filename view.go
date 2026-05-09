@@ -542,11 +542,11 @@ func (m *model) renderPanel(title, body string, width, height int, active bool) 
 	frameH := style.GetVerticalFrameSize()
 	borderW := style.GetHorizontalBorderSize()
 	borderH := style.GetVerticalBorderSize()
-	if width < frameW+16 {
-		width = frameW + 16
+	if width < frameW+4 {
+		width = frameW + 4
 	}
-	if height < frameH+3 {
-		height = frameH + 3
+	if height < frameH+2 {
+		height = frameH + 2
 	}
 
 	contentW := width - frameW
@@ -564,9 +564,8 @@ func (m *model) renderPanel(title, body string, width, height int, active bool) 
 func (m *model) splitWidths() (int, int) {
 	gap := 1
 	usable := m.width - gap
-	minPanelWidth := panelStyle.GetHorizontalFrameSize() + 16
-	if usable < minPanelWidth*2 {
-		usable = minPanelWidth * 2
+	if usable < 2 {
+		usable = 2
 	}
 
 	left := usable / 2
@@ -575,19 +574,19 @@ func (m *model) splitWidths() (int, int) {
 }
 
 func (m *model) shouldStackPanels() bool {
-	minSideBySideWidth := (panelStyle.GetHorizontalFrameSize() + 16) * 2
+	minSideBySideWidth := (panelStyle.GetHorizontalFrameSize() + 10) * 2
 	return m.width < minSideBySideWidth
 }
 
 func (m *model) renderResponsivePanels(leftTitle, leftBody string, leftActive bool, rightTitle, rightBody string, rightActive bool, leftW, rightW, contentH int) string {
 	if m.shouldStackPanels() {
 		stackH := (contentH - 1) / 2
-		if stackH < 6 {
-			stackH = 6
+		if stackH < 3 {
+			stackH = 3
 		}
 		bottomH := contentH - stackH
-		if bottomH < 6 {
-			bottomH = 6
+		if bottomH < 3 {
+			bottomH = 3
 		}
 
 		fullW := m.width
@@ -609,8 +608,8 @@ func (m *model) contentHeight() int {
 	if m.shouldStackPanels() {
 		h--
 	}
-	if h < 8 {
-		h = 8
+	if h < 3 {
+		h = 3
 	}
 	return h
 }
