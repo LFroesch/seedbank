@@ -1,6 +1,8 @@
 # seedbank
 
-Terminal fake-data generator for fixtures, demos, and seed scripts. `seedbank` lets you browse generators in a TUI, preview records, and export deterministic output in several common formats.
+Terminal fake-data generator for fixtures, demos, and seed scripts. `seedbank` lets you preview realistic records quickly and export them in the formats you actually need for tests, demos, and seed data.
+
+![seedbank hero screenshot](assets/screenshots/hero.png)
 
 ## Install
 
@@ -26,6 +28,12 @@ seedbank
 seedbank --list
 seedbank --gen person --count 25 --fmt json --out fixtures/users.json
 ```
+
+## Media
+
+![seedbank field selection screenshot](assets/screenshots/fields.png)
+
+![seedbank preview screenshot](assets/screenshots/preview.png)
 
 ## Output Formats
 
