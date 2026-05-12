@@ -111,7 +111,7 @@ func (m *model) renderBody() string {
 }
 
 func (m *model) renderHeader() string {
-	title := titleStyle.Render("seedbank")
+	title := titleStyle.Render("seedbank") + " " + dimStyle.Render(version)
 
 	tabs := []struct {
 		label string
