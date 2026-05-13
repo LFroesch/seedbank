@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/LFroesch/tui-suite/suitechrome"
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/LFroesch/seedbank/internal/output"
@@ -111,7 +112,7 @@ func (m *model) renderBody() string {
 }
 
 func (m *model) renderHeader() string {
-	title := titleStyle.Render("seedbank") + " " + dimStyle.Render(version)
+	title := suitechrome.RenderTitle("seedbank", version)
 
 	tabs := []struct {
 		label string
@@ -125,26 +126,19 @@ func (m *model) renderHeader() string {
 		{"Export", modeExport},
 	}
 
-	var renderedTabs []string
+	var renderedTabs []suitechrome.Tab
 	for i, tab := range tabs {
-		if i > 0 {
-			renderedTabs = append(renderedTabs, dimStyle.Render(" │ "))
-		}
 		label := fmt.Sprintf("%d %s", i+1, tab.label)
-		if m.mode == tab.mode {
-			renderedTabs = append(renderedTabs, activeTabStyle.Render(label))
-		} else {
-			renderedTabs = append(renderedTabs, dimStyle.Render(label))
-		}
+		renderedTabs = append(renderedTabs, suitechrome.Tab{Label: label, Active: m.mode == tab.mode})
 	}
 	if m.mode == modeHelp {
-		renderedTabs = append(renderedTabs, dimStyle.Render(" │ "), activeTabStyle.Render("Help"))
+		renderedTabs = append(renderedTabs, suitechrome.Tab{Label: "Help", Active: true})
 	}
 	if m.mode == modeMixSelect {
-		renderedTabs = append(renderedTabs, dimStyle.Render(" │ "), activeTabStyle.Render("Mix"))
+		renderedTabs = append(renderedTabs, suitechrome.Tab{Label: "Mix", Active: true})
 	}
 
-	left := title + "  " + strings.Join(renderedTabs, "")
+	left := title + "  " + suitechrome.RenderTabs(renderedTabs)
 
 	var rightParts []string
 	if m.selectedGen != nil {
@@ -172,7 +166,7 @@ func (m *model) renderHeader() string {
 		}
 	}
 
-	return left + strings.Repeat(" ", gap) + right
+	return suitechrome.JoinHeader(m.width, left, right)
 }
 
 func (m *model) renderStatusLine() string {
@@ -189,31 +183,22 @@ func (m *model) renderFooter() string {
 	}
 	left := strings.Join(leftParts, dimStyle.Render("  "))
 
-	rightParts := []string{
-		dimStyle.Render(m.footerHints()),
-	}
+	actions := m.footerActions()
 	if m.mode.usesPanelFocus() {
-		rightParts = append(rightParts, accentStyle.Render("tab pane"))
+		actions = append(actions, suitechrome.Action{Key: "tab", Label: "pane"})
 	}
-	rightParts = append(rightParts, accentStyle.Render("1-6 steps"))
-	right := strings.Join(rightParts, dimStyle.Render("  ·  "))
+	actions = append(actions, suitechrome.Action{Key: "1-6", Label: "steps"})
+	right := suitechrome.RenderActions(actions)
 
 	maxLeft := m.width / 3
 	if maxLeft < 18 {
 		maxLeft = 18
 	}
 	left = truncateString(left, maxLeft)
-
-	gap := m.width - lipgloss.Width(left) - lipgloss.Width(right)
-	if gap < 2 {
-		right = truncateString(right, m.width-lipgloss.Width(left)-2)
-		gap = m.width - lipgloss.Width(left) - lipgloss.Width(right)
-		if gap < 1 {
-			gap = 1
-		}
+	if lipgloss.Width(left)+lipgloss.Width(right)+2 > m.width {
+		right = truncateString(right, max(0, m.width-lipgloss.Width(left)-2))
 	}
-
-	return left + strings.Repeat(" ", gap) + right
+	return suitechrome.JoinLine(m.width, left, right)
 }
 
 func (m *model) renderGenerators() string {
@@ -614,26 +599,26 @@ func (m *model) contentHeight() int {
 	return h
 }
 
-func (m *model) footerHints() string {
+func (m *model) footerActions() []suitechrome.Action {
 	switch m.mode {
 	case modeGenerators:
-		return "j/k move  pgup/pgdn jump  enter select  m mix  ? help"
+		return []suitechrome.Action{{"j/k", "move"}, {"pgup/dn", "jump"}, {"enter", "select"}, {"m", "mix"}, {"?", "help"}}
 	case modeFields:
-		return "j/k move  space toggle  a all/none  enter continue  esc back"
+		return []suitechrome.Action{{"j/k", "move"}, {"space", "toggle"}, {"a", "all/none"}, {"enter", "continue"}, {"esc", "back"}}
 	case modeCount:
-		return "type count  enter generate  esc back"
+		return []suitechrome.Action{{"type", "count"}, {"enter", "generate"}, {"esc", "back"}}
 	case modePreview:
-		return "j/k scroll  pgup/pgdn jump  v view  r re-roll  +/- count  f format  c copy  e export"
+		return []suitechrome.Action{{"j/k", "scroll"}, {"pgup/dn", "jump"}, {"v", "view"}, {"r", "re-roll"}, {"+/-", "count"}, {"f", "format"}, {"c", "copy"}, {"e", "export"}}
 	case modeFormat:
-		return "j/k move  enter select  esc back"
+		return []suitechrome.Action{{"j/k", "move"}, {"enter", "select"}, {"esc", "back"}}
 	case modeExport:
-		return "type filename  enter export  esc back"
+		return []suitechrome.Action{{"type", "filename"}, {"enter", "export"}, {"esc", "back"}}
 	case modeHelp:
-		return "j/k scroll  pgup/pgdn jump  ? close  esc close"
+		return []suitechrome.Action{{"j/k", "scroll"}, {"pgup/dn", "jump"}, {"?", "close"}, {"esc", "close"}}
 	case modeMixSelect:
-		return "j/k move  space toggle  pgup/pgdn jump  enter continue  esc back"
+		return []suitechrome.Action{{"j/k", "move"}, {"space", "toggle"}, {"pgup/dn", "jump"}, {"enter", "continue"}, {"esc", "back"}}
 	default:
-		return ""
+		return nil
 	}
 }
 
