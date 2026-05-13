@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/LFroesch/tui-suite/suitechrome"
+	"github.com/LFroesch/seedbank/suitechrome"
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/LFroesch/seedbank/internal/output"
